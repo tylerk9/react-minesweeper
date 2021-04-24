@@ -1,0 +1,10 @@
+.gameboard {
+    color: black;
+    padding: 40px;
+    width: 50%;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: xx-large;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}

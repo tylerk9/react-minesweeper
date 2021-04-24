@@ -1,17 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import Minesweeper from './minesweeper/Minesweeper';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <center><h1>Tyler's Minesweeper (Made in React)</h1>
+    <p>To win, place a flag on every bomb.</p></center>    
+    <Minesweeper size={16} mines={40} />
+    <center><button onClick={() => window.location.reload()}>Retry</button></center>
   </React.StrictMode>,
   document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
