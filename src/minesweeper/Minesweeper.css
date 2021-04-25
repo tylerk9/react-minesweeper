@@ -1,0 +1,32 @@
+.gameboard {
+    color: black;
+    padding: 5px;
+    font-family: 'Consolas', Consolas;    
+    margin-left: auto;
+    margin-right: auto;
+	margin-top: auto;
+	margin-bottom: auto;
+	border-spacing:0px 0px;
+	text-align: center;
+	vertical-align: center;
+}
+
+.openCell {	
+	border: 1px solid black;
+	vertical-align: center;
+	height:2em;
+	width:2em;
+	font-size:125%;
+	background-color: #ffffff;
+	color: #000000
+}
+
+.closedCell {	
+	border: 1px solid black;
+	vertical-align: center;
+	height:2em;
+	width:2em;
+	font-size:125%;
+	background-color: #dddddd;
+	color: #ff0000
+}

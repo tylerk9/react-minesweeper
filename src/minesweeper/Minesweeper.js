@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './Minesweeper.module.css';
+import './Minesweeper.css';
 
 class Minesweeper extends React.Component {
     /*
@@ -53,23 +53,33 @@ class Minesweeper extends React.Component {
     /*
     * Handles when a space gets left clicked
     */ 
-    leftClickHandler(e, x, y) {
+    leftClickHandler(x, y) {
         if (this.state.status !== "playing")
             return;
 
-        e.preventDefault();
-
-        // Don't want to be able to open flagged cells.
-        if(this.state.map[x][y].flag)
+        // Don't want to be able to open flagged cells or already open cells
+        if(this.state.map[x][y].flag || this.state.map[x][y].open)
             return;
 
         var _map = this.state.map;
         _map[x][y].open = true;
+		
+		// If we get a zero square, left click all around it for auto complete.
+		if(this.countNeighborBombs(x, y) === 0){
+			for (var i = x - 1; i <= x + 1; i++) {
+				for (var j = y - 1; j <= y + 1; j++) {
+					if (i >= 0 && j >= 0 && i < this.state.size && j < this.state.size) {						
+						this.leftClickHandler(i, j);
+					}
+				}
+			}
+		}
+		
         this.setState({ map: _map }, () => {
             if (this.state.map[x][y].mine) {
                 this.setState({ status: "lose" });
-            }
-        });
+            }					
+        });			
     }
 
     /*
@@ -138,12 +148,13 @@ class Minesweeper extends React.Component {
             if (this.state.map[x][y].mine) {
                 return "X";
             } else {
-                return this.countNeighborBombs(x, y).toString();
+				var num = this.countNeighborBombs(x, y);				
+                return (num > 0) ? num.toString() : "";
             }
         } else if (this.state.map[x][y].flag) {
-            return "☑";
+            return "✔";
         } else {
-            return "☐"
+            return "";
         }
     }
 
@@ -166,24 +177,24 @@ class Minesweeper extends React.Component {
     render() {
         return (
             <div>
-                <table className={styles.gameboard}> 
+                <table className="gameboard"> 
                     <thead>
                     </thead>
                     <tbody>
-                        {Array.from(Array(this.state.size).keys()).map(x => {
+                        {Array.from(Array(this.state.size).keys()).map(y => {
                             return (
-                                <td key={x}>
-                                    {Array.from(Array(this.state.size).keys()).map(y => {
+                                <tr key={y}>
+                                    {Array.from(Array(this.state.size).keys()).map(x => {
                                         return (
-                                            <tr onClick={(e) => this.leftClickHandler(e, x, y)}
+                                            <td className={this.state.map[x][y].open ? "openCell" : "closedCell"} onClick={(e) => this.leftClickHandler(x, y)}
                                                 onContextMenu={(e) => this.rightClickHandler(e, x, y)}
-                                                key={y}>
+                                                key={x}>
                                                 {this.determineSpaceContent(x, y)}
-                                            </tr>
+                                            </td>
                                         );
                                     })}
-                                </td>
-                            )
+                                </tr>
+                            );
                         })}
                     </tbody>
                 </table>
