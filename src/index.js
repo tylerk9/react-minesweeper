@@ -8,7 +8,7 @@ ReactDOM.render(
     <center><h1>Tyler's Minesweeper (Made in React)</h1>
     <p>To win, place a flag on every bomb.</p></center>    
     <Minesweeper size={16} mines={40} />
-    <center><button onClick={() => window.location.reload()}>Retry</button></center>
+    <center><button className="retryButton" onClick={() => window.location.reload()}>Retry</button></center>
   </React.StrictMode>,
   document.getElementById('root')
 );
