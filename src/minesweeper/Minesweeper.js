@@ -41,9 +41,15 @@ class Minesweeper extends React.Component {
         }
 
         // Randomize mine locations
-        for (var i = 0; i < this.state.mines; i++) {
-            _map[Math.floor(Math.random() * this.state.size)][Math.floor(Math.random() * this.state.size)].mine = true;
-        }
+		var minesPlaced = 0;
+		while(minesPlaced < this.state.mines) {
+			var ranX = Math.floor(Math.random() * this.state.size);
+			var ranY = Math.floor(Math.random() * this.state.size);
+			if(!_map[ranX][ranY].mine) {
+				_map[ranX][ranY].mine = true;
+				minesPlaced = minesPlaced + 1;
+			}
+		}
 
         // Store it
         this.setState({ map: _map });
