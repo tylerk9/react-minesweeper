@@ -12,8 +12,7 @@ class Minesweeper extends React.Component {
         this.state = {
             size: props.size,
             mines: props.mines,
-            numCorrect: 0,
-            numFlags: 0,
+            numLeft: props.size*props.size - props.mines,
             status: "playing",
             map: []
         };
@@ -53,7 +52,7 @@ class Minesweeper extends React.Component {
     /*
     * Handles when a space gets left clicked
     */ 
-    leftClickHandler(x, y) {
+    async leftClickHandler(x, y) {
         if (this.state.status !== "playing")
             return;
 
@@ -64,6 +63,20 @@ class Minesweeper extends React.Component {
         var _map = this.state.map;
         _map[x][y].open = true;
 		
+		// Check if we won after updating the map.
+		// Note that we need to do this syncronously in order to properly count down.
+		await new Promise (end => {
+			this.setState({ map: _map, numLeft:this.state.numLeft-1 }, () => {
+				if (this.state.map[x][y].mine) {
+					this.setState({ status: "lose" });				
+				} else if (this.state.numLeft === 0) {
+					this.setState({ status: "win" });		
+				}
+				
+				end();
+			});
+		});
+		
 		// If we get a zero square, left click all around it for auto complete.
 		if(this.countNeighborBombs(x, y) === 0){
 			for (var i = x - 1; i <= x + 1; i++) {
@@ -73,13 +86,7 @@ class Minesweeper extends React.Component {
 					}
 				}
 			}
-		}
-		
-        this.setState({ map: _map }, () => {
-            if (this.state.map[x][y].mine) {
-                this.setState({ status: "lose" });
-            }					
-        });			
+		}					
     }
 
     /*
@@ -91,34 +98,11 @@ class Minesweeper extends React.Component {
 
         e.preventDefault();
 
+        // Toggle the flag
         var _map = this.state.map;
-
-        if (_map[x][y].flag) {
-            // About to be unflagged
-            this.setState({ numFlags: this.state.numFlags - 1 })
-
-            if (_map[x][y].mine) {
-                // About to be incorrect
-                this.setState({ numCorrect: this.state.numCorrect - 1 })
-            }
-        } else {
-            // About to be flagged
-            this.setState({ numFlags: this.state.numFlags + 1 })
-
-            if (_map[x][y].mine) {
-                // About to be correct
-                this.setState({ numCorrect: this.state.numCorrect + 1 })
-            }
-        }
-
-        // Flip-flop the flag
         _map[x][y].flag = !_map[x][y].flag;
 
-        this.setState({ map: _map }, () => {
-            if (this.state.numCorrect === this.state.mines && this.state.mines === this.state.numFlags) {
-                this.setState({ status: "win" });
-            }
-        });
+        this.setState({ map: _map });
     }
 
     /*
